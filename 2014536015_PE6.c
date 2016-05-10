@@ -1,23 +1,15 @@
-/**  prompting shell version 2
- **
- **		Solves the `one-shot' problem of version 1
- **			Uses execvp(), but fork()s first so that the
- **			shell waits around to perform another command
- **		New problem: shell catches signals.  Run vi, press ^c.
- **/
-
 #include	<stdio.h>
 #include	<signal.h>
 
-#define	MAXARGS		20				/* cmdline args	*/
-#define	ARGLEN		100				/* token length	*/
+#define	MAXARGS		20				
+#define	ARGLEN		100			
 
 main()
 {
-	char	*arglist[MAXARGS+1];		/* an array of ptrs	*/
-	int	numargs;			/* index into array	*/
-	char	argbuf[ARGLEN];			/* read stuff here	*/
-	char	*makestring();			/* malloc etc		*/
+	char	*arglist[MAXARGS+1];		
+	int	numargs;			
+	char	argbuf[ARGLEN];			
+	char	*makestring();			
 
 	numargs = 0;
 	while ( numargs < MAXARGS )
@@ -27,10 +19,10 @@ main()
 			arglist[numargs++] = makestring(argbuf);
 		else
 		{
-			if ( numargs > 0 ){		/* any args?	*/
-				arglist[numargs]=NULL;	/* close list	*/
-				execute( arglist );	/* do it	*/
-				numargs = 0;		/* and reset	*/
+			if ( numargs > 0 ){		
+				arglist[numargs]=NULL;	
+				execute( arglist );
+				numargs = 0;		
 			}
 		}
 	}
@@ -38,19 +30,16 @@ main()
 }
 
 execute( char *arglist[] )
-/*
- *	use fork and execvp and wait to do it
- */
 {
-	int	pid,exitstatus;				/* of child	*/
+	int	pid,exitstatus;				
 
-	pid = fork();					/* make new process */
+	pid = fork();				
 	switch( pid ){
 		case -1:	
 			perror("fork failed");
 			exit(1);
 		case 0:
-			execvp(arglist[0], arglist);		/* do it */
+			execvp(arglist[0], arglist);	
 			perror("execvp failed");
 			exit(1);
 		default:
@@ -63,18 +52,15 @@ execute( char *arglist[] )
 	}
 }
 char *makestring( char *buf )
-/*
- * trim off newline and create storage for the string
- */
 {
 	char	*cp, *malloc();
 
-	buf[strlen(buf)-1] = '\0';		/* trim newline	*/
-	cp = malloc( strlen(buf)+1 );		/* get memory	*/
-	if ( cp == NULL ){			/* or die	*/
+	buf[strlen(buf)-1] = '\0';		
+	cp = malloc( strlen(buf)+1 );	
+	if ( cp == NULL ){		
 		fprintf(stderr,"no memory\n");
 		exit(1);
 	}
-	strcpy(cp, buf);		/* copy chars	*/
-	return cp;			/* return ptr	*/
+	strcpy(cp, buf);		
+	return cp;		
 }
